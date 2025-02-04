@@ -16,3 +16,5 @@ export default {
   },
   plugins: [],
 } satisfies Config;
+
+//buat font warna gambar
