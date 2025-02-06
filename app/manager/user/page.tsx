@@ -42,16 +42,16 @@ const UserPage = async ({
     const search = searchParams.search ? searchParams.search.toString() : ``;
     const user: IUser[] = await getUser(search);
   
-    const category = (cat: string): React.ReactNode => {
+    const role = (cat: string): React.ReactNode => {
       if (cat === "MANAGER") {
         return (
-          <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+          <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
             Manager
           </span>
         );
       }
       return (
-        <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300">
+        <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">
           Cashier
         </span>
       );
@@ -59,14 +59,14 @@ const UserPage = async ({
 
     return (
       <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-        <div className="text-black font-bold mb-2">User Data</div>
-        <p className="text-black text-secondary mb-4">
+        <div className="text-black font-bold text-4xl pl-5 pt-5 mb-2">User Data</div>
+        <p className="text-black text-secondary mb-4 text-sm pl-5 pt-2">
           This page displays user data, allowing menus to view details, search,
           and manage user by adding, editing, or deleting them.
         </p>
         <div className="flex justify-between items-center mb-4">
           {/* Search Bar */}
-          <div className="flex items-center w-full max-w-md flex-grow">
+          <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
             <Search url={`/manager/user`} search={search} />
           </div>
           <div className="ml-4">
@@ -116,7 +116,7 @@ const UserPage = async ({
                       Role
                     </small>
                     <br />
-                    {data.role}
+                    {role(data.role)}
                   </div>
                 </div>
               ))}

@@ -70,3 +70,32 @@ export const post = async (url: string, data: string | FormData, token: string |
         return{status: false, message: `Something were wrong: ${error}`};
     }
 }
+
+export const put = async (url: string, data: string | FormData, token: string) => {
+    try {
+        const type: string = (typeof data == 'string') ? "application/json" : "multipart/form-data"
+        let result = await axiosInstance.put(url, data, {
+            headers: {
+                "Authorization": `Bearer ${token}` || '',
+                "Content-Type": type
+            }
+        })
+        return {
+            status: true,
+            data: result.data
+        }
+    } catch (error) {
+        const err = error as CustomAxiosError<{message: string, code: number}>
+        if (err.response) {
+            console.log(err.response.data.message);
+            return {
+                status: false,
+                massage: `${err.code}: something wrong`
+            }
+        }
+        console.log(err.response);
+        return { 
+            status: false, 
+            message: `Something were wrong: ${error}` };
+    }
+}

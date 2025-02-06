@@ -19,7 +19,6 @@ export const ButtonSuccess = ({ children, type, onClick, className }: Props) => 
     )
 }
 
-
 export const ButtonWarning = ({ children, type, onClick, className }: Props) => {
     return (
         <button className={`text-sm bg-yellow-500 text-white rounded-md py-2 px-4 hover:bg-yellow-600 font-bold ${className}`}
@@ -28,7 +27,6 @@ export const ButtonWarning = ({ children, type, onClick, className }: Props) => 
         </button>
     )
 }
-
 
 export const ButtonDanger = ({ children, type, onClick, className }: Props) => {
     return (

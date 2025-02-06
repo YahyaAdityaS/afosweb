@@ -121,20 +121,20 @@ const AddMenu = () => {
         <Modal isShow={isShow} onclose={(state) => setIsShow(state)}>
           <form onSubmit={handleSubmit}>
             {/* modal header */}
-            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 shadow">
+            <div className="sticky top-0 bg-sky-600 px-5 pt-5 pb-3 shadow">
               <div className="w-full flex items-center">
                 <div className="flex flex-col">
-                  <strong className="font-bold text-2xl">
+                  <strong className="font-bold text-2xl text-white">
                     Create New Menu
                   </strong>
-                  <small className="text-slate-400 text-sm">
+                  <small className="text-sm text-white">
                     Managers can create menu items on this page.
                   </small>
                 </div>
                 <div className="ml-auto">
                   <button
                     type="button"
-                    className="text-slate-400"
+                    className="text-white"
                     onClick={() => setIsShow(false)}
                   >
                     <svg

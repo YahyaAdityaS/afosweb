@@ -40,9 +40,9 @@ const FileInput = (props: Props) => {
 
     return (
         <div className="w-full flex flex-col gap-1 my-2">
-            <strong className="text-xs font-bold text-slate-500">{props.label}</strong>
+            <strong className="text-xs font-bold text-black">{props.label}</strong>
             <input type={`file`}
-                className={`text-sm w-full rounded-md p-2 bg-slate-50 border border-white focus:border-slate-500 focus:outline-none ${props.className}`}
+                className={`text-sm w-full rounded-md p-2 bg-slate-50 border border-gray-600 focus:border-black focus:outline-none ${props.className}`}
                 disabled={props.disabled}
                 required={props.required || false}
                 accept={acceptTypes}

@@ -6,6 +6,7 @@ import { AlertInfo } from "@/components/alert";
 import Image from "next/image";
 import Search from "./search";
 import AddMenu from "./addMenu";
+import EditMenu from "./editMenu";
 
 interface MenuResponse {
   status: boolean;
@@ -47,39 +48,41 @@ const MenuPage = async ({
   const category = (cat: string): React.ReactNode => {
     if (cat === "FOOD") {
       return (
-        <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+        <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
           Food
         </span>
       );
     }
     if (cat === "SNACK") {
       return (
-        <span className="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300">
+        <span className="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
           Snack
         </span>
       );
     }
     return (
-      <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300">
+      <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">
         Drink
       </span>
     );
   };
   return (
     <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-      <div className="text-black font-bold text-4xl pl-5 pt-5 mb-2">Menu Data</div>
+      <div className="text-black font-bold text-4xl pl-5 pt-5 mb-2">
+        Menu Data
+      </div>
       <p className="text-black text-secondary mb-4 text-sm pl-5 pt-2">
         This page displays menu data, allowing menus to view details, search,
         and manage menu items by adding, editing, or deleting them.
       </p>
       <div className="flex justify-between items-center mb-4">
         {/* Search Bar */}
-        <div className="flex items-center w-full max-w-md flex-grow pl-5">
+        <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
           <Search url={`/manager/menu`} search={search} />
         </div>
         <div className="ml-4 pr-4 mb-4">
-            <AddMenu />
-          </div>
+          <AddMenu />
+        </div>
       </div>
       {menu.length === 0 ? (
         <AlertInfo title="informasi">No data Available</AlertInfo>
@@ -100,7 +103,7 @@ const MenuPage = async ({
                     width={60}
                     height={60}
                     src={`${BASE_IMAGE_MENU}/${data.picture}`}
-                    className="rounded-xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     alt="preview"
                     unoptimized
                   />
@@ -137,6 +140,9 @@ const MenuPage = async ({
                   <small className="text-white font-bold text-primary">
                     Action
                   </small>
+                  <div className="flex gap-1">
+                    <EditMenu selectedMenu={data} />
+                  </div>
                   <br />
                 </div>
               </div>
