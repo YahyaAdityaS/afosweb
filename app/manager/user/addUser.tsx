@@ -82,7 +82,7 @@ const AddUser = () => {
       } else {
         toast(data?.message, {
           hideProgressBar: true,
-          containerId: `toastMenu`,
+          containerId: `toastUser`,
           type: `warning`,
         });
       }
@@ -90,7 +90,7 @@ const AddUser = () => {
       console.log(error);
       toast(`Something Wrong`, {
         hideProgressBar: true,
-        containerId: `toastMenu`,
+        containerId: `toastUser`,
         type: `error`,
       });
     }

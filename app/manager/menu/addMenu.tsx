@@ -72,6 +72,7 @@ const AddMenu = () => {
       payload.append("description", description || "");
       if (file !== null) payload.append("picture", file || "");
       const { data } = (await post(url, payload, TOKEN)) as MenuResponse;
+      console.log(data)
       if (data?.status) {
         setIsShow(false);
         toast(data?.message, {
@@ -96,9 +97,10 @@ const AddMenu = () => {
       });
     }
   };
+
   return (
     <div>
-      <ToastContainer containerId={`toastMenu`} />
+        <ToastContainer containerId={`toastMenu`} />
         <ButtonSuccess type="button" onClick={() => openModal()}>
           <div className="flex items-center gap-2">
             <svg
@@ -167,7 +169,6 @@ const AddMenu = () => {
                 required={true}
                 label="Name"
               />
-
               <InputGroupComponent
                 id={`price`}
                 type="number"

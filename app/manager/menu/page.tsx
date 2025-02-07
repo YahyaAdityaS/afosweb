@@ -68,23 +68,22 @@ const MenuPage = async ({
   };
   return (
     <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-      <div className="text-black font-bold text-4xl pl-5 pt-5 mb-2">
-        Menu Data
-      </div>
-      <p className="text-black text-secondary mb-4 text-sm pl-5 pt-2">
+      <h4 className="text-xl font-bold mb-2">Menu Data</h4>
+      <p className="text-sm text-secondary mb-4">
         This page displays menu data, allowing menus to view details, search,
         and manage menu items by adding, editing, or deleting them.
       </p>
       <div className="flex justify-between items-center mb-4">
         {/* Search Bar */}
-        <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
+        <div className="flex items-center w-full max-w-md flex-grow">
           <Search url={`/manager/menu`} search={search} />
         </div>
-        <div className="ml-4 pr-4 mb-4">
+        {/* Add Menu Button */}
+        <div className="ml-4 pr-4">
           <AddMenu />
         </div>
       </div>
-      {menu.length === 0 ? (
+      {menu.length == 0 ? (
         <AlertInfo title="informasi">No data Available</AlertInfo>
       ) : (
         <>
@@ -92,52 +91,50 @@ const MenuPage = async ({
             {menu.map((data, index) => (
               <div
                 key={`keyPrestasi${index}`}
-                className={`flex flex-wrap backdrop-blur bg-sky-600 rounded-lg shadow m-1 border border-sky-600 text-white mb-4`}
+                className={`flex flex-wrap shadow m-2`}
               >
                 <div className="w-full md:w-1/12 p-2">
-                  <small className="text-white font-bold text-primary">
+                  <small className="text-sm font-bold text-primary">
                     Picture
                   </small>
                   <br />
                   <Image
-                    width={60}
-                    height={60}
+                    width={40}
+                    height={40}
                     src={`${BASE_IMAGE_MENU}/${data.picture}`}
-                    className="rounded-lg overflow-hidden"
+                    className="rounded-sm overflow-hidden"
                     alt="preview"
                     unoptimized
                   />
                 </div>
                 <div className="w-full md:w-2/12 p-2">
-                  <small className="text-white font-bold text-primary">
-                    Name
-                  </small>
+                  <small className="text-sm font-bold text-primary">Name</small>{" "}
                   <br />
                   {data.name}
                 </div>
                 <div className="w-full md:w-1/12 p-2">
-                  <small className="text-white font-bold text-primary">
+                  <small className="text-sm font-bold text-primary">
                     Price
-                  </small>
+                  </small>{" "}
                   <br />
                   {data.price}
                 </div>
                 <div className="w-full md:w-5/12 p-2">
-                  <small className="text-white font-bold text-primary">
+                  <small className="text-sm font-bold text-primary">
                     Description
-                  </small>
+                  </small>{" "}
                   <br />
                   {data.description}
                 </div>
                 <div className="w-full md:w-1/12 p-2">
-                  <small className="text-white font-bold text-primary">
+                  <small className="text-sm font-bold text-primary">
                     Category
-                  </small>
+                  </small>{" "}
                   <br />
                   {category(data.category)}
                 </div>
                 <div className="w-full md:w-2/12 p-2">
-                  <small className="text-white font-bold text-primary">
+                  <small className="text-sm font-bold text-primary">
                     Action
                   </small>
                   <div className="flex gap-1">
