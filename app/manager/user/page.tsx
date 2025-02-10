@@ -6,6 +6,7 @@ import { AlertInfo } from "@/components/alert";
 import Image from "next/image";
 import Search from "./search";
 import AddUser from "./addUser";
+import EditUser from "./editUser";
 
 interface UserResponse {
   status: boolean;
@@ -69,7 +70,7 @@ const UserPage = async ({
           <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
             <Search url={`/manager/user`} search={search} />
           </div>
-          <div className="ml-4">
+          <div className="ml-4 pr-4">
             <AddUser/>
           </div>
         </div>
@@ -117,6 +118,9 @@ const UserPage = async ({
                     </small>
                     <br />
                     {role(data.role)}
+                  </div>
+                  <div className="flex gap-1">
+                    <EditUser selectedUser={data} />
                   </div>
                 </div>
               ))}
