@@ -68,14 +68,14 @@ const MenuPage = async ({
   };
   return (
     <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-      <h4 className="text-xl font-bold mb-2">Menu Data</h4>
-      <p className="text-sm text-secondary mb-4">
+      <div className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">Menu Data</div>
+      <p className="text-black text-sm text-secondary mb-4 pl-5 pt-2">
         This page displays menu data, allowing menus to view details, search,
         and manage menu items by adding, editing, or deleting them.
       </p>
       <div className="flex justify-between items-center mb-4">
         {/* Search Bar */}
-        <div className="flex items-center w-full max-w-md flex-grow">
+        <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
           <Search url={`/manager/menu`} search={search} />
         </div>
         {/* Add Menu Button */}
@@ -91,7 +91,7 @@ const MenuPage = async ({
             {menu.map((data, index) => (
               <div
                 key={`keyPrestasi${index}`}
-                className={`flex flex-wrap shadow m-2`}
+                className={`flex flex-wrap bg-sky-600 rounded-lg m-1`}
               >
                 <div className="w-full md:w-1/12 p-2">
                   <small className="text-sm font-bold text-primary">

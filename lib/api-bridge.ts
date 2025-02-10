@@ -85,17 +85,18 @@ export const put = async (url: string, data: string | FormData, token: string) =
             data: result.data
         }
     } catch (error) {
-        const err = error as CustomAxiosError<{message: string, code: number}>
+        const err = error as CustomAxiosError<{ message: string, code: number }>
         if (err.response) {
             console.log(err.response.data.message);
             return {
                 status: false,
-                massage: `${err.code}: something wrong`
+                message: `${err.code}: something wrong`
             }
         }
         console.log(err.response);
-        return { 
-            status: false, 
-            message: `Something were wrong: ${error}` };
+        return {
+            status: false,
+            message: `Something were wrong`
+        }
     }
-}
+ } 

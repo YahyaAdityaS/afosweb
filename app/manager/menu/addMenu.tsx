@@ -1,7 +1,7 @@
 "use client";
 
-import { IMenu } from "@/app/types";
-import { BASE_API_URL } from "@/global";
+import { IMenu, IUser } from "@/app/types";
+import { BASE_API_URL, BASE_IMAGE_PROFILE } from "@/global";
 import { post } from "@/lib/api-bridge";
 import { getCookie } from "@/lib/client-cookie";
 import { useRouter } from "next/navigation";
@@ -25,41 +25,39 @@ interface MenuResponse {
     message: string;
   };
 }
-
 const AddMenu = () => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [menu, setMenu] = useState<IMenu>({
     id: 0,
-    uuid: ``,
-    name: ``,
-    price: 0,
-    description: ``,
-    category: ``,
-    picture: ``,
-    createdAt: ``,
-    updatedAt: ``,
-  });
-  const router = useRouter();
-  const TOKEN = getCookie("token");
-  const [file, setFile] = useState<File | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+uuid: ``,
+name: ``,
+price: 0,
+description: ``,
+category: ``,
+picture: ``,
+createdAt: ``,
+updatedAt: ``,
+});
+const router = useRouter();
+const TOKEN = getCookie("token");
+const [file, setFile] = useState<File | null>(null);
+const formRef = useRef<HTMLFormElement>(null);
 
-  const openModal = () => {
-    setMenu({
-      id: 0,
-      uuid: ``,
-      name: ``,
-      price: 0,
-      description: ``,
-      category: ``,
-      picture: ``,
-      createdAt: ``,
-      updatedAt: ``,
-    });
-    setIsShow(true);
-    if (formRef.current) formRef.current.reset();
-  };
-
+const openModal = () => {
+setMenu({
+  id: 0,
+  uuid: ``,
+  name: ``,
+  price: 0,
+  description: ``,
+  category: ``,
+  picture: ``,
+  createdAt: ``,
+  updatedAt: ``,
+});
+setIsShow(true);
+if (formRef.current) formRef.current.reset();
+};
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
@@ -72,7 +70,6 @@ const AddMenu = () => {
       payload.append("description", description || "");
       if (file !== null) payload.append("picture", file || "");
       const { data } = (await post(url, payload, TOKEN)) as MenuResponse;
-      console.log(data)
       if (data?.status) {
         setIsShow(false);
         toast(data?.message, {
@@ -97,10 +94,8 @@ const AddMenu = () => {
       });
     }
   };
-
   return (
     <div>
-        <ToastContainer containerId={`toastMenu`} />
         <ButtonSuccess type="button" onClick={() => openModal()}>
           <div className="flex items-center gap-2">
             <svg
@@ -117,26 +112,26 @@ const AddMenu = () => {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Add Menu
+            Add User
           </div>
         </ButtonSuccess>
         <Modal isShow={isShow} onclose={(state) => setIsShow(state)}>
           <form onSubmit={handleSubmit}>
             {/* modal header */}
-            <div className="sticky top-0 bg-sky-600 px-5 pt-5 pb-3 shadow">
+            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 shadow">
               <div className="w-full flex items-center">
                 <div className="flex flex-col">
-                  <strong className="font-bold text-2xl text-white">
-                    Create New Menu
+                  <strong className="font-bold text-2xl">
+                    Create New User
                   </strong>
-                  <small className="text-sm text-white">
-                    Managers can create menu items on this page.
+                  <small className="text-slate-400 text-sm">
+                    Can create user items on this page.
                   </small>
                 </div>
                 <div className="ml-auto">
                   <button
                     type="button"
-                    className="text-white"
+                    className="text-slate-400"
                     onClick={() => setIsShow(false)}
                   >
                     <svg
@@ -169,6 +164,7 @@ const AddMenu = () => {
                 required={true}
                 label="Name"
               />
+
               <InputGroupComponent
                 id={`price`}
                 type="number"
@@ -228,7 +224,7 @@ const AddMenu = () => {
           </form>
         </Modal>
     </div>
-  );  
+  )
 };
 
 export default AddMenu;
