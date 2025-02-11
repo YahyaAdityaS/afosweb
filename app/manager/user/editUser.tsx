@@ -26,6 +26,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
   // kode selanjutnya disini
   const [isShow, setIsShow] = useState<boolean>(false);
   const [user, setUser] = useState<IUser>({ ...selectedUser });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
   const TOKEN = getCookie("token") || "";
   const [file, setFile] = useState<File | null>(null);
@@ -33,21 +34,26 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
   const openModal = () => {
     setUser({ ...selectedUser });
     setIsShow(true);
+    setShowPassword(false);
     if (formRef.current) formRef.current.reset();
+  };
+  const changePassword = () => {
+    setUser({ ...user, password: "" });
+    setShowPassword(true);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
       const url = `${BASE_API_URL}/user/${selectedUser.id}`;
-      const { name, email, password, role} = user;
+      const { name, email, password, role } = user;
       const payload = new FormData();
       payload.append("name", name || "");
       payload.append("email", email || "");
-      payload.append("password", password || "");
       payload.append("role", role || "");
+      if (showPassword && password) payload.append("password", password || "");
       if (file !== null) payload.append("picture", file || "");
-      const { data } = await put(url, payload, TOKEN) as UserResponse;
+      const { data } = (await put(url, payload, TOKEN)) as UserResponse;
       if (data?.status) {
         setIsShow(false);
         toast(data?.message, {
@@ -98,7 +104,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
             <div className="w-full flex items-center">
               <div className="flex flex-col">
                 <strong className="font-bold text-white text-2xl">
-                  Update Menu
+                  Update User
                 </strong>
                 <small className="text-white text-sm">
                   Managers can update both Cashier and Manager roles on this
@@ -108,7 +114,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
               <div className="ml-auto">
                 <button
                   type="button"
-                  className="text-slate-400"
+                  className="text-white"
                   onClick={() => setIsShow(false)}
                 >
                   <svg
@@ -145,9 +151,9 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
               id={`email`}
               type="text"
               value={user.email}
-              onChange={(val) => setUser({ ...user, email: val})}
+              onChange={(val) => setUser({ ...user, email: val })}
               required={true}
-              label="Price"
+              label="Email"
             />
 
             <InputGroupComponent
@@ -156,7 +162,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
               value={user.role}
               onChange={(val) => setUser({ ...user, role: val })}
               required={true}
-              label="Description"
+              label="Role"
             />
             <FileInput
               acceptTypes={[
@@ -170,6 +176,22 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
               onChange={(f) => setFile(f)}
               required={false}
             />
+            {showPassword && (
+              <InputGroupComponent
+                id="password"
+                type="password"
+                value={user.password || ""}
+                onChange={(val) => setUser({ ...user, password: val })}
+                label="Password default"
+                className="text-black"
+              />
+            )}
+
+            {!showPassword && (
+              <ButtonDanger type="button" onClick={() => changePassword()}>
+                Ubah Password Default
+              </ButtonDanger>
+            )}
           </div>
           {/* end modal body */}
           {/* modal footer */}

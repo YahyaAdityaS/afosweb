@@ -108,7 +108,7 @@ const EditMenu = ({ selectedMenu }: { selectedMenu: IMenu }) => {
               <div className="ml-auto">
                 <button
                   type="button"
-                  className="text-slate-400"
+                  className="text-white"
                   onClick={() => setIsShow(false)}
                 >
                   <svg
