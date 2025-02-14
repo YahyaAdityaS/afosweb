@@ -7,6 +7,7 @@ import Image from "next/image";
 import Search from "./search";
 import AddUser from "./addUser";
 import EditUser from "./editUser";
+import DeleteUser from "./deleteUser";
 
 interface UserResponse {
   status: boolean;
@@ -126,6 +127,7 @@ const UserPage = async ({
                   </small>
                   <div className="flex gap-1">
                     <EditUser selectedUser={data} />
+                    <DeleteUser selectedUser={data} />
                   </div>
                   <br />
                 </div>

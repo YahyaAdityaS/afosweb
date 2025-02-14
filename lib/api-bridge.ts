@@ -100,3 +100,32 @@ export const put = async (url: string, data: string | FormData, token: string) =
         }
     }
  } 
+
+export const drop = async (url: string, token: string) => {
+    try {
+        let result = await axiosInstance.delete(url, {
+            headers: {
+                "Authorization": `Bearer ${token}` || '',
+            }
+        })
+        return {
+            status: true,
+            data: result.data
+        }
+    }
+    catch (error) {
+        const err = error as CustomAxiosError<{message : string, code: number}>
+        if (err.response) {
+            console.log(err.response.data.message);
+            return {
+                status: false,
+                message : `${err.code} : something wrong`
+            }
+        }
+        console.log(err.response);
+        return {
+            status: false,
+            mmessage: `Something were wrong`
+        }
+    }
+}

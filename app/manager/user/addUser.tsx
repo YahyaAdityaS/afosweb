@@ -97,7 +97,6 @@ const AddUser = () => {
   };
   return (
     <div>
-    <ToastContainer containerId={`toastUser`} />
         <ButtonSuccess type="button" onClick={() => openModal()}>
           <div className="flex items-center gap-2">
             <svg

@@ -7,6 +7,7 @@ import Image from "next/image";
 import Search from "./search";
 import AddMenu from "./addMenu";
 import EditMenu from "./editMenu";
+import DeleteMenu from "./deleteMenu";
 
 interface MenuResponse {
   status: boolean;
@@ -139,6 +140,7 @@ const MenuPage = async ({
                   </small>
                   <div className="flex gap-1">
                     <EditMenu selectedMenu={data} />
+                    <DeleteMenu selectedMenu={data} />
                   </div>
                   <br />
                 </div>

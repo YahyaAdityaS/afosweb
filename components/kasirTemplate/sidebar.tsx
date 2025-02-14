@@ -14,7 +14,7 @@ type MenuType = {
   label: string;
 };
 
-type ManagerProp = {
+type KasirProp = {
   children: ReactNode;
   id: string;
   title: string;
@@ -23,7 +23,7 @@ type ManagerProp = {
 
 
 
-const Sidebar = ({ children, id, title, menuList }: ManagerProp) => {
+const Sidebar = ({ children, id, title, menuList }: KasirProp) => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userName, setUserName] = useState<string>("");

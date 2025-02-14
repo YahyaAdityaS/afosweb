@@ -58,14 +58,14 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
         setIsShow(false);
         toast(data?.message, {
           hideProgressBar: true,
-          containerId: `toastMenu`,
+          containerId: `toastUser`,
           type: `success`,
         });
         setTimeout(() => router.refresh(), 1000);
       } else {
         toast(data?.message, {
           hideProgressBar: true,
-          containerId: `toastMenu`,
+          containerId: `toastUser`,
           type: `warning`,
         });
       }
@@ -73,7 +73,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
       console.log(error);
       toast(`Something Wrong`, {
         hideProgressBar: true,
-        containerId: `toastMenu`,
+        containerId: `toastUser`,
         type: `error`,
       });
     }
