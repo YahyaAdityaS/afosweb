@@ -27,7 +27,6 @@ const getMenu = async (search: string): Promise<IMenu[]> => {
     if (response?.data?.data && Array.isArray(response.data.data)) {
       return response.data.data;
     }
-
     console.error("Unexpected response structure:", response);
     return [];
   } catch (error) {
@@ -36,11 +35,7 @@ const getMenu = async (search: string): Promise<IMenu[]> => {
   }
 };
 
-const MenuPage = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const MenuPage = async ({ searchParams, }: { searchParams: { [key: string]: string | string[] | undefined };}) => {
   // const MenuPage = async ({ searchParams }: { searchParams?: Record<string, string | string[] >  }) => {
   //   const search = searchParams?.search?.toString() ?? "";
   const search = searchParams.search ? searchParams.search.toString() : ``;
@@ -67,9 +62,12 @@ const MenuPage = async ({
       </span>
     );
   };
+
   return (
     <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-      <div className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">Menu Data</div>
+      <div className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">
+        Menu Data
+      </div>
       <p className="text-black text-sm text-secondary mb-4 pl-5 pt-2">
         This page displays menu data, allowing menus to view details, search,
         and manage menu items by adding, editing, or deleting them.
