@@ -1,10 +1,13 @@
+"use client";
+import { useState, useEffect } from "react";
 import { IMenu } from "@/app/types";
-import { getCookies } from "@/lib/server-cookie";
+import { getCookie } from "@/lib/client-cookie";
 import { BASE_API_URL, BASE_IMAGE_MENU } from "@/global";
-import { get } from "@/lib/api-bridge"; //untuk komunikasi dengan beckend cukup dengan satu baris saja
-import { AlertInfo } from "@/components/alert";
-import Image from "next/image";
+import { get } from "@/lib/api-bridge";
+import { AlertInfo } from "@/components/alert/index";
 import Search from "./search";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 interface MenuResponse {
   status: boolean;
@@ -15,120 +18,199 @@ interface MenuResponse {
   };
 }
 
-const getMenu = async (search: string): Promise<IMenu[]> => {
+const getMenu = async (search: string, token: string): Promise<IMenu[]> => {
   try {
-    const TOKEN = await getCookies("token");
     const url = `${BASE_API_URL}/menu?search=${search}`;
-    const response = (await get(url, TOKEN)) as MenuResponse;
-
-    if (response?.data?.data && Array.isArray(response.data.data)) {
-      return response.data.data;
-    }
-    console.error("Unexpected response structure:", response);
-    return [];
+    const { data } = await get(url, token) as MenuResponse;
+    return data?.status ? data.data : [];
   } catch (error) {
-    console.error("Error fetching menu:", error);
+    console.log(error);
     return [];
   }
 };
 
-const PesanPage = async ({searchParams, }: { searchParams: { [key: string]: string | string[] | undefined };}) => {
-  const search = searchParams.search ? searchParams.search.toString() : ``;
-  const menu: IMenu[] = await getMenu(search);
+const MenuPage = () => {
+  const searchParams = useSearchParams(); // Menggunakan hook untuk mengambil search params
+  const search = searchParams.get("search") || ""; // Mengambil nilai parameter search
 
-  const category = (cat: string): React.ReactNode => {
-    if (cat === "FOOD") {
-      return (
-        <span className="bg-blue-100 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-          Food
-        </span>
-      );
+  const [menu, setMenu] = useState<IMenu[]>([]);
+  const [cart, setCart] = useState<{ [key: string]: number }>({});
+  const [total, setTotal] = useState<number>(0);
+
+  useEffect(() => {
+    const token = getCookie("token") || "";
+    const fetchMenu = async () => {
+      const data = await getMenu(search, token);
+      setMenu(data);
+    };
+    fetchMenu();
+  }, [search]);
+
+  const renderCategory = (cat: string): React.ReactNode => {
+    switch (cat) {
+      case "FOOD":
+        return (
+          <span className="bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+            Food
+          </span>
+        );
+      case "SNACK":
+        return (
+          <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+            Snack
+          </span>
+        );
+      default:
+        return (
+          <span className="bg-purple-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+            Drink
+          </span>
+        );
     }
-    if (cat === "SNACK") {
-      return (
-        <span className="bg-indigo-100 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
-          Snack
-        </span>
-      );
-    }
-    return (
-      <span className="bg-purple-100 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">
-        Drink
-      </span>
-    );
+  };
+
+  const handleAddToCart = (menuId: number, price: number) => {
+    setCart((prevCart) => {
+      const updatedCart = { ...prevCart };
+      updatedCart[menuId] = (updatedCart[menuId] || 0) + 1;
+      setTotal((prevTotal) => prevTotal + price);
+      return updatedCart;
+    });
+  };
+
+  const handleRemoveFromCart = (menuId: number, price: number) => {
+    setCart((prevCart) => {
+      const updatedCart = { ...prevCart };
+      const currentCount = updatedCart[menuId] || 0;
+      if (currentCount > 1) {
+        updatedCart[menuId] = currentCount - 1;
+        setTotal((prevTotal) => prevTotal - price > 0 ? prevTotal - price : 0);
+      } else {
+        delete updatedCart[menuId];
+        setTotal((prevTotal) => prevTotal - price > 0 ? prevTotal - price : 0);
+      }
+      return updatedCart;
+    });
+  };
+
+  const handleCheckout = () => {
+    alert(`Total: Rp${total} - Proceeding to checkout...`);
   };
 
   return (
-    <div className="m-2 bg-white rounded-lg p-3 border-t-4 border-t-primary shadow-md">
-    <div className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">
-        Menu Data
-    </div>
+    <div className="m-4 bg-white rounded-lg p-6 border-t-4 border-t-primary shadow-lg">
+      <h4 className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">Menu Data</h4>
       <p className="text-black text-sm text-secondary mb-4 pl-5 pt-2">
-        This page displays menu data to order.
+        This page displays menu data, allowing users to view details, search,
+        and manage menu items by adding, editing, or deleting them.
       </p>
-      <div className="flex justify-between items-center mb-4">
-        {/* Search Bar */}
+
+      <div className="flex justify-between items-center mb-6">
         <div className="flex items-center w-full max-w-md flex-grow pl-5 text-black">
           <Search url={`/cashier/pesanMakanan`} search={search} />
         </div>
       </div>
-      {menu.length == 0 ? (
-        <AlertInfo title="informasi">No data Available</AlertInfo>
+
+      {menu.length === 0 ? (
+        <AlertInfo title="Informasi">No data available</AlertInfo>
       ) : (
-        <>
-          <div className="m-2">
-            {menu.map((data, index) => (
-              <div
-                key={`keyPrestasi${index}`}
-                className={`flex flex-wrap bg-sky-600 rounded-lg m-1`}
-              >
-                <div className="w-full md:w-1/12 p-2">
-                  <small className="text-sm font-bold text-primary">
-                    Picture
-                  </small>
-                  <br />
-                  <Image
-                    width={40}
-                    height={40}
-                    src={`${BASE_IMAGE_MENU}/${data.picture}`}
-                    className="rounded-sm overflow-hidden"
-                    alt="preview"
-                    unoptimized
-                  />
+        <div className="flex">
+          <div className="w-2/3 grid grid-cols-2 gap-4">
+            {menu.map((data, index) => {
+              const itemInCart = cart[data.id] || 0;
+              return (
+                <div
+                  key={`keyMenu${index}`}
+                  className="flex flex-col bg-white shadow-md rounded-lg p-4"
+                >
+                  <div className="flex justify-center mb-4">
+                    <Image
+                      width={400}
+                      height={300}
+                      src={`${BASE_IMAGE_MENU}/${data.picture}`}
+                      className="rounded-sm overflow-hidden w-full h-48 object-cover"
+                      alt="Menu image"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="mb-2 text-center">
+                    <h5 className="text-xl font-semibold text-sky-600">
+                      {data.name}
+                    </h5>
+                    <p className="text-gray-600">{data.description}</p>
+                  </div>
+                  <div className="flex justify-center mb-4">
+                    <span className="text-lg font-semibold text-sky-600">
+                      Rp{data.price}
+                    </span>
+                  </div>
+                  <div className="flex justify-center">
+                  <button
+                        className="bg-red-500 text-white px-4 rounded-lg"
+                        onClick={() =>
+                          handleRemoveFromCart(data.id, data.price)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="text-blue-700 pt-2 mx-3">{itemInCart} </span>
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                        onClick={() => handleAddToCart(data.id, data.price)}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                  <div className="flex justify-center pt-5">
+                    {renderCategory(data.category)}
+                  </div>
                 </div>
-                <div className="w-full md:w-2/12 p-2">
-                  <small className="text-sm font-bold text-primary">Name</small>{" "}
-                  <br />
-                  {data.name}
-                </div>
-                <div className="w-full md:w-1/12 p-2">
-                  <small className="text-sm font-bold text-primary">
-                    Price
-                  </small>{" "}
-                  <br />
-                  {data.price}
-                </div>
-                <div className="w-full md:w-5/12 p-2">
-                  <small className="text-sm font-bold text-primary">
-                    Description
-                  </small>{" "}
-                  <br />
-                  {data.description}
-                </div>
-                <div className="w-full md:w-1/12 p-2">
-                  <small className="text-sm font-bold text-primary">
-                    Category
-                  </small>{" "}
-                  <br />
-                  {category(data.category)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </>
+
+          {/* Transaction Section on the right */}
+          <div className="w-1/3 ml-6">
+            <h4 className="text-xl font-bold text-sky-600 mb-4">
+              Transaksi
+            </h4>
+            <div className="bg-white p-4 shadow-md rounded-lg">
+              <div className="flex flex-col gap-2 text-sky-600">
+                {Object.entries(cart).map(([menuId, quantity]) => {
+                  const menuItem = menu.find(
+                    (item) => item.id === parseInt(menuId)
+                  );
+                  return (
+                    menuItem && (
+                      <div key={menuId} className="flex justify-between">
+                        <span>{menuItem.name}</span>
+                        <span>
+                          {quantity} x Rp{menuItem.price}
+                        </span>
+                      </div>
+                    )
+                  );
+                })}
+              </div>
+              <div className="flex justify-between mt-4">
+                <h5 className="text-lg font-semibold text-sky-600">Total</h5>
+                <span className="text-lg font-semibold text-sky-600">
+                  Rp{total / 2}
+                </span>
+              </div>
+              <button
+                className="bg-sky-600 text-white p-2 rounded-full w-full mt-4"
+                onClick={handleCheckout}
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
-  )
+  );
 };
 
-export default PesanPage;
+export default MenuPage;
