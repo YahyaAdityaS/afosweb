@@ -82,7 +82,7 @@ if (formRef.current) formRef.current.reset();
         toast(data?.message, {
           hideProgressBar: true,
           containerId: `toastMenu`,
-          type: `warning`,
+          type: `success`,
         });
       }
     } catch (error) {
@@ -112,7 +112,7 @@ if (formRef.current) formRef.current.reset();
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Add User
+            Add Menu
           </div>
         </ButtonSuccess>
         <Modal isShow={isShow} onclose={(state) => setIsShow(state)}>
@@ -122,10 +122,10 @@ if (formRef.current) formRef.current.reset();
               <div className="w-full flex items-center">
                 <div className="flex flex-col">
                   <strong className="font-bold text-2xl text-white">
-                    Create New User
+                    Create New Menu
                   </strong>
                   <small className="text-slate-50 text-sm">
-                    Can create user items on this page.
+                    Can create menu items on this page.
                   </small>
                 </div>
                 <div className="ml-auto">

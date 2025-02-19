@@ -35,7 +35,7 @@ const DeleteUser = ({selectedUser}: {selectedUser: IUser}) => {
             const {data} = await drop(url, TOKEN) as UserResponse
             if (data?.status) {
                 setIsShow(false)
-                toast(data?.message, {hideProgressBar: true, containerId:`toastUser`, type: `warning`})
+                toast(data?.message, {hideProgressBar: true, containerId:`toastUser`, type: `success`})
             } router.refresh()
         } catch (error) {
             console.log(error);

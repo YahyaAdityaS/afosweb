@@ -83,7 +83,7 @@ const AddUser = () => {
         toast(data?.message, {
           hideProgressBar: true,
           containerId: `toastUser`,
-          type: `warning`,
+          type: `success`,
         });
       }
     } catch (error) {
@@ -177,7 +177,7 @@ const AddUser = () => {
 
               <InputGroupComponent
                 id={`password`}
-                type="text"
+                type="password"
                 value={user.password}
                 onChange={(val) => setUser({ ...user, password: val })}
                 required={true}

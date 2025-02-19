@@ -60,7 +60,7 @@ const EditMenu = ({ selectedMenu }: { selectedMenu: IMenu }) => {
         toast(data?.message, {
           hideProgressBar: true,
           containerId: `toastMenu`,
-          type: `warning`,
+          type: `success`,
         });
       }
     } catch (error) {

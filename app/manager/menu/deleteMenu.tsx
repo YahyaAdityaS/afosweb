@@ -35,7 +35,7 @@ const DeleteMenu = ({selectedMenu}: {selectedMenu: IMenu}) => {
             const {data} = await drop(url, TOKEN) as MenuResponse
             if (data?.status) {
                 setIsShow(false)
-                toast(data?.message, {hideProgressBar: true, containerId:`toastMenu`, type: `warning`})
+                toast(data?.message, {hideProgressBar: true, containerId:`toastMenu`, type: `success`})
             } router.refresh()
         } catch (error) {
             console.log(error);

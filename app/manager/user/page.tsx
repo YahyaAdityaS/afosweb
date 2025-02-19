@@ -1,6 +1,6 @@
 import { IMenu, IUser } from "@/app/types";
 import { getCookies } from "@/lib/server-cookie";
-import { BASE_API_URL, BASE_IMAGE_MENU } from "@/global";
+import { BASE_API_URL, BASE_IMAGE_PROFILE } from "@/global";
 import { get } from "@/lib/api-bridge"; //untuk komunikasi dengan beckend cukup dengan satu baris saja
 import { AlertInfo } from "@/components/alert";
 import Image from "next/image";
@@ -96,7 +96,7 @@ const UserPage = async ({
                   <Image
                     width={40}
                     height={40}
-                    src={`${BASE_IMAGE_MENU}/${data.profile_picture}`}
+                    src={`${BASE_IMAGE_PROFILE}/${data.profile_picture}`}
                     className="rounded-sm overflow-hidden"
                     alt="preview"
                     unoptimized

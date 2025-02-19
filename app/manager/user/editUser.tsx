@@ -66,7 +66,7 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
         toast(data?.message, {
           hideProgressBar: true,
           containerId: `toastUser`,
-          type: `warning`,
+          type: `success`,
         });
       }
     } catch (error) {
@@ -155,15 +155,17 @@ const EditUser = ({ selectedUser }: { selectedUser: IUser }) => {
               required={true}
               label="Email"
             />
-
-            <InputGroupComponent
+            <Select
               id={`role`}
-              type="text"
               value={user.role}
-              onChange={(val) => setUser({ ...user, role: val })}
-              required={true}
               label="Role"
-            />
+              required={true}
+              onChange={(val) => setUser({ ...user, role: val })}
+            >
+              <option value="">--- Select Category ---</option>
+              <option value="MANAGER">Manager</option>
+              <option value="CASHIER">Cashier</option>
+            </Select>
             <FileInput
               acceptTypes={[
                 "application/pdf",
