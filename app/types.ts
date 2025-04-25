@@ -7,7 +7,8 @@ export interface IMenu {
     description: string,
     category: string,
     createdAt: string,
-    updatedAt: string
+    updatedAt: string,
+    massager: string
 }
 
 export interface IUser {

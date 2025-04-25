@@ -30,12 +30,19 @@ const getMenu = async (search: string, token: string): Promise<IMenu[]> => {
 };
 
 const MenuPage = () => {
-  const searchParams = useSearchParams(); // Menggunakan hook untuk mengambil search params
-  const search = searchParams.get("search") || ""; // Mengambil nilai parameter search
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
 
   const [menu, setMenu] = useState<IMenu[]>([]);
   const [cart, setCart] = useState<{ [key: string]: number }>({});
   const [total, setTotal] = useState<number>(0);
+  const [category, setCategory] = useState<string>("All");
+
+  // Detail Transaksi
+  const [customerName, setCustomerName] = useState("");
+  const [tableNumber, setTableNumber] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("new");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
 
   useEffect(() => {
     const token = getCookie("token") || "";
@@ -84,17 +91,23 @@ const MenuPage = () => {
       const currentCount = updatedCart[menuId] || 0;
       if (currentCount > 1) {
         updatedCart[menuId] = currentCount - 1;
-        setTotal((prevTotal) => prevTotal - price > 0 ? prevTotal - price : 0);
-      } else {
+        setTotal((prevTotal) => prevTotal - price);
+      } else if (currentCount === 1) {
         delete updatedCart[menuId];
-        setTotal((prevTotal) => prevTotal - price > 0 ? prevTotal - price : 0);
+        setTotal((prevTotal) => prevTotal - price);
       }
       return updatedCart;
     });
   };
 
+  const filteredMenu = category === "All" ? menu : menu.filter(item => item.category.toUpperCase() === category.toUpperCase());
+
   const handleCheckout = () => {
-    alert(`Total: Rp${total} - Proceeding to checkout...`);
+    alert(`Total: Rp${total} - Proceeding to checkout...
+    Nama Customer: ${customerName}
+    Nomor Meja: ${tableNumber}
+    Status Pembayaran: ${paymentStatus}
+    Metode Pembayaran: ${paymentMethod}`);
   };
 
   return (
@@ -111,24 +124,37 @@ const MenuPage = () => {
         </div>
       </div>
 
-      {menu.length === 0 ? (
+      <div className="flex pl-5 space-x-4 mb-6">
+        {["All", "Food", "Drink", "Snack"].map((cat) => (
+          <button
+            key={cat}
+            className={`px-4 py-2 rounded-lg ${category === cat ? "bg-sky-600 text-white" : "bg-primary text-sky-600 border border-sk"
+              } transition-all duration-300 hover:bg-sky-400 hover:text-white hover:shadow-lg hover:scale-105`}
+            onClick={() => setCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {filteredMenu.length === 0 ? (
         <AlertInfo title="Informasi">No data available</AlertInfo>
       ) : (
         <div className="flex">
-          <div className="w-2/3 grid grid-cols-2 gap-4">
-            {menu.map((data, index) => {
+          <div className="w-2/3 grid grid-cols-3 gap-4">
+            {filteredMenu.map((data, index) => {
               const itemInCart = cart[data.id] || 0;
               return (
                 <div
                   key={`keyMenu${index}`}
-                  className="flex flex-col bg-white shadow-md rounded-lg p-4"
+                  className="flex flex-col bg-white shadow-md rounded-lg p-4 border border-sky-100"
                 >
                   <div className="flex justify-center mb-4">
                     <Image
                       width={400}
                       height={300}
                       src={`${BASE_IMAGE_MENU}/${data.picture}`}
-                      className="rounded-sm overflow-hidden w-full h-48 object-cover"
+                      className="rounded-md overflow-hidden w-full h-48 object-cover"
                       alt="Menu image"
                       unoptimized
                     />
@@ -145,22 +171,20 @@ const MenuPage = () => {
                     </span>
                   </div>
                   <div className="flex justify-center">
-                  <button
-                        className="bg-red-500 text-white px-4 rounded-lg"
-                        onClick={() =>
-                          handleRemoveFromCart(data.id, data.price)
-                        }
-                      >
-                        -
-                      </button>
-                      <span className="text-blue-700 pt-2 mx-3">{itemInCart} </span>
-                      <button
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg"
-                        onClick={() => handleAddToCart(data.id, data.price)}
-                      >
-                        +
-                      </button>
-                    </div>
+                    <button
+                      className="bg-red-500 text-white px-4 rounded-lg"
+                      onClick={() => handleRemoveFromCart(data.id, data.price)}
+                    >
+                      -
+                    </button>
+                    <span className="text-blue-700 pt-2 mx-3">{itemInCart} </span>
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                      onClick={() => handleAddToCart(data.id, data.price)}
+                    >
+                      +
+                    </button>
+                  </div>
 
                   <div className="flex justify-center pt-5">
                     {renderCategory(data.category)}
@@ -175,7 +199,41 @@ const MenuPage = () => {
             <h4 className="text-xl font-bold text-sky-600 mb-4">
               Transaksi
             </h4>
-            <div className="bg-white p-4 shadow-md rounded-lg">
+            <div className="bg-white p-4 shadow-md rounded-lg border border-sky-50 ">
+              <div className="mb-4">
+                <input
+                  type="text"
+                  className="w-full border rounded-md px-3 py-2 mb-2 text-slate-900 border-sky-500 outline-none"
+                  placeholder="Nama Customer"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="w-full border rounded-md px-3 py-2 mb-2 text-black border-sky-500 outline-none"
+                  placeholder="Nomor Meja"
+                  value={tableNumber}
+                  onChange={(e) => setTableNumber(e.target.value)}
+                />
+                <select
+                  className="w-full border rounded-md px-3 py-2 mb-2 text-black border-sky-600 outline-none"
+                  value={paymentStatus}
+                  onChange={(e) => setPaymentStatus(e.target.value)}
+                >
+                  <option value="new" className="text-black">New</option>
+                  <option value="paid" className="text-black">Paid</option>
+                  <option value="done" className="text-black ">Done</option>
+                </select>
+                <select
+                  className="w-full border rounded-md px-3 py-2 mb-4 text-black border-sky-600 outline-none"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                >
+                  <option value="cash" className="text-black">Cash</option>
+                  <option value="qris" className="text-black">QRIS</option>
+                </select>
+              </div>
+
               <div className="flex flex-col gap-2 text-sky-600">
                 {Object.entries(cart).map(([menuId, quantity]) => {
                   const menuItem = menu.find(
@@ -200,7 +258,7 @@ const MenuPage = () => {
                 </span>
               </div>
               <button
-                className="bg-sky-600 text-white p-2 rounded-full w-full mt-4"
+                className="bg-sky-600 text-white p-2 rounded-lg w-full mt-4"
                 onClick={handleCheckout}
               >
                 Checkout
