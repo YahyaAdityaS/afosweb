@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { IMenu } from "@/app/types";
-import { getCookie } from "@/lib/client-cookie";
+import { getCookie, storeCookie } from "@/lib/client-cookie";
 import { BASE_API_URL, BASE_IMAGE_MENU } from "@/global";
 import { get } from "@/lib/api-bridge";
 import { AlertInfo } from "@/components/alert/index";
@@ -21,11 +21,30 @@ interface MenuResponse {
 const getMenu = async (search: string, token: string): Promise<IMenu[]> => {
   try {
     const url = `${BASE_API_URL}/menu?search=${search}`;
-    const { data } = await get(url, token) as MenuResponse;
+    const { data } = (await get(url, token)) as MenuResponse;
     return data?.status ? data.data : [];
   } catch (error) {
     console.log(error);
     return [];
+  }
+};
+
+const postTransaction = async (transactionData: any, token: string) => {
+  try {
+    const url = `${BASE_API_URL}/order`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(transactionData),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error posting transaction:", error);
+    return null;
   }
 };
 
@@ -37,6 +56,7 @@ const MenuPage = () => {
   const [cart, setCart] = useState<{ [key: string]: number }>({});
   const [total, setTotal] = useState<number>(0);
   const [category, setCategory] = useState<string>("All");
+  const [note, setNote] = useState("");
 
   // Detail Transaksi
   const [customerName, setCustomerName] = useState("");
@@ -52,6 +72,17 @@ const MenuPage = () => {
     };
     fetchMenu();
   }, [search]);
+
+  useEffect(() => {
+    const savedCart = getCookie("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+  
+  useEffect(() => {
+    storeCookie("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const renderCategory = (cat: string): React.ReactNode => {
     switch (cat) {
@@ -100,19 +131,54 @@ const MenuPage = () => {
     });
   };
 
-  const filteredMenu = category === "All" ? menu : menu.filter(item => item.category.toUpperCase() === category.toUpperCase());
+  const filteredMenu =
+    category === "All"
+      ? menu
+      : menu.filter(
+          (item) => item.category.toUpperCase() === category.toUpperCase()
+        );
 
-  const handleCheckout = () => {
-    alert(`Total: Rp${total} - Proceeding to checkout...
-    Nama Customer: ${customerName}
-    Nomor Meja: ${tableNumber}
-    Status Pembayaran: ${paymentStatus}
-    Metode Pembayaran: ${paymentMethod}`);
+  const handleCheckout = async () => {
+    const token = getCookie("token") || "";
+
+    // Membuat objek transaksi sesuai dengan format yang diinginkan
+    const transactionData = {
+      customer: customerName, // Nama customer dari input
+      table_number: tableNumber, // Nomor meja dari input
+      payment_method: paymentMethod, // Metode pembayaran dari dropdown
+      status: paymentStatus, // Status pembayaran dari dropdown
+      order_list: Object.entries(cart)
+        .map(([menuId, quantity]) => {
+          const menuItem = menu.find((item) => item.id === parseInt(menuId));
+          return menuItem
+            ? {
+                idMenu: menuItem.id, // ID Menu
+                quantity: quantity, // Jumlah
+                note: note, // Catatan jika diperlukan
+              }
+            : null;
+        })
+        .filter((item) => item !== null), // Filter jika ada item null
+    };
+
+    // Menambahkan data transaksi ke backend
+    const result = await postTransaction(transactionData, token);
+
+    if (result?.status) {
+      alert("Transaction successful!");
+      setCart({}); // Clear cart
+      setTotal(0); // Reset total
+      storeCookie("cart", JSON.stringify({})); // Clear cart in cookie
+    } else {
+      alert("Transaction failed. Please try again.");
+    }    
   };
 
   return (
     <div className="m-4 bg-white rounded-lg p-6 border-t-4 border-t-primary shadow-lg">
-      <h4 className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">Menu Data</h4>
+      <h4 className="text-4xl pl-5 pt-5 font-bold mb-2 text-black">
+        Menu Data
+      </h4>
       <p className="text-black text-sm text-secondary mb-4 pl-5 pt-2">
         This page displays menu data, allowing users to view details, search,
         and manage menu items by adding, editing, or deleting them.
@@ -128,8 +194,11 @@ const MenuPage = () => {
         {["All", "Food", "Drink", "Snack"].map((cat) => (
           <button
             key={cat}
-            className={`px-4 py-2 rounded-lg ${category === cat ? "bg-sky-600 text-white" : "bg-primary text-sky-600 border border-sk"
-              } transition-all duration-300 hover:bg-sky-400 hover:text-white hover:shadow-lg hover:scale-105`}
+            className={`px-4 py-2 rounded-lg ${
+              category === cat
+                ? "bg-sky-600 text-white"
+                : "bg-primary text-sky-600 border border-sk"
+            } transition-all duration-300 hover:bg-sky-400 hover:text-white hover:shadow-lg hover:scale-105`}
             onClick={() => setCategory(cat)}
           >
             {cat}
@@ -177,7 +246,9 @@ const MenuPage = () => {
                     >
                       -
                     </button>
-                    <span className="text-blue-700 pt-2 mx-3">{itemInCart} </span>
+                    <span className="text-blue-700 pt-2 mx-3">
+                      {itemInCart}{" "}
+                    </span>
                     <button
                       className="bg-green-500 text-white px-4 py-2 rounded-lg"
                       onClick={() => handleAddToCart(data.id, data.price)}
@@ -196,9 +267,7 @@ const MenuPage = () => {
 
           {/* Transaction Section on the right */}
           <div className="w-1/3 ml-6">
-            <h4 className="text-xl font-bold text-sky-600 mb-4">
-              Transaksi
-            </h4>
+            <h4 className="text-xl font-bold text-sky-600 mb-4">Transaksi</h4>
             <div className="bg-white p-4 shadow-md rounded-lg border border-sky-50 ">
               <div className="mb-4">
                 <input
@@ -220,20 +289,36 @@ const MenuPage = () => {
                   value={paymentStatus}
                   onChange={(e) => setPaymentStatus(e.target.value)}
                 >
-                  <option value="new" className="text-black">New</option>
-                  <option value="paid" className="text-black">Paid</option>
-                  <option value="done" className="text-black ">Done</option>
+                  <option value="NEW" className="text-black">
+                    New
+                  </option>
+                  <option value="PAID" className="text-black">
+                    Paid
+                  </option>
+                  <option value="DONE" className="text-black ">
+                    Done
+                  </option>
                 </select>
                 <select
-                  className="w-full border rounded-md px-3 py-2 mb-4 text-black border-sky-600 outline-none"
+                  className="w-full border rounded-md px-3 py-2 text-black border-sky-600 outline-none"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 >
-                  <option value="cash" className="text-black">Cash</option>
-                  <option value="qris" className="text-black">QRIS</option>
+                  <option value="CASH" className="text-black">
+                    Cash
+                  </option>
+                  <option value="QRIS" className="text-black">
+                    Qris
+                  </option>
                 </select>
               </div>
-
+              <input
+                type="text"
+                className="w-full border rounded-md px-3 py-2 mb-2 text-black border-sky-600 outline-none"
+                placeholder="Catatan (opsional)"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
               <div className="flex flex-col gap-2 text-sky-600">
                 {Object.entries(cart).map(([menuId, quantity]) => {
                   const menuItem = menu.find(

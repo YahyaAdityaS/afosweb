@@ -29,35 +29,37 @@ const AddMenu = () => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [menu, setMenu] = useState<IMenu>({
     id: 0,
-uuid: ``,
-name: ``,
-price: 0,
-description: ``,
-category: ``,
-picture: ``,
-createdAt: ``,
-updatedAt: ``,
-});
-const router = useRouter();
-const TOKEN = getCookie("token");
-const [file, setFile] = useState<File | null>(null);
-const formRef = useRef<HTMLFormElement>(null);
+    uuid: ``,
+    name: ``,
+    price: 0,
+    description: ``,
+    category: ``,
+    picture: ``,
+    createdAt: ``,
+    updatedAt: ``,
+    massager: ``,
+  });
+  const router = useRouter();
+  const TOKEN = getCookie("token");
+  const [file, setFile] = useState<File | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-const openModal = () => {
-setMenu({
-  id: 0,
-  uuid: ``,
-  name: ``,
-  price: 0,
-  description: ``,
-  category: ``,
-  picture: ``,
-  createdAt: ``,
-  updatedAt: ``,
-});
-setIsShow(true);
-if (formRef.current) formRef.current.reset();
-};
+  const openModal = () => {
+    setMenu({
+      id: 0,
+      uuid: ``,
+      name: ``,
+      price: 0,
+      description: ``,
+      category: ``,
+      picture: ``,
+      createdAt: ``,
+      updatedAt: ``,
+      massager: ``,
+    });
+    setIsShow(true);
+    if (formRef.current) formRef.current.reset();
+  };
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
@@ -96,135 +98,135 @@ if (formRef.current) formRef.current.reset();
   };
   return (
     <div>
-        <ButtonSuccess type="button" onClick={() => openModal()}>
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add Menu
-          </div>
-        </ButtonSuccess>
-        <Modal isShow={isShow} onclose={(state) => setIsShow(state)}>
-          <form onSubmit={handleSubmit}>
-            {/* modal header */}
-            <div className="sticky top-0 bg-sky-600 px-5 pt-5 pb-3 shadow">
-              <div className="w-full flex items-center">
-                <div className="flex flex-col">
-                  <strong className="font-bold text-2xl text-white">
-                    Create New Menu
-                  </strong>
-                  <small className="text-slate-50 text-sm">
-                    Can create menu items on this page.
-                  </small>
-                </div>
-                <div className="ml-auto">
-                  <button
-                    type="button"
-                    className="text-white"
-                    onClick={() => setIsShow(false)}
+      <ButtonSuccess type="button" onClick={() => openModal()}>
+        <div className="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
+          </svg>
+          Add Menu
+        </div>
+      </ButtonSuccess>
+      <Modal isShow={isShow} onclose={(state) => setIsShow(state)}>
+        <form onSubmit={handleSubmit}>
+          {/* modal header */}
+          <div className="sticky top-0 bg-sky-600 px-5 pt-5 pb-3 shadow">
+            <div className="w-full flex items-center">
+              <div className="flex flex-col">
+                <strong className="font-bold text-2xl text-white">
+                  Create New Menu
+                </strong>
+                <small className="text-slate-50 text-sm">
+                  Can create menu items on this page.
+                </small>
+              </div>
+              <div className="ml-auto">
+                <button
+                  type="button"
+                  className="text-white"
+                  onClick={() => setIsShow(false)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18 18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
-            {/* end modal header */}
+          </div>
+          {/* end modal header */}
 
-            {/* modal body */}
-            <div className="p-5">
-              <InputGroupComponent
-                id={`name`}
-                type="text"
-                value={menu.name}
-                onChange={(val) => setMenu({ ...menu, name: val })}
-                required={true}
-                label="Name"
-              />
+          {/* modal body */}
+          <div className="p-5">
+            <InputGroupComponent
+              id={`name`}
+              type="text"
+              value={menu.name}
+              onChange={(val) => setMenu({ ...menu, name: val })}
+              required={true}
+              label="Name"
+            />
 
-              <InputGroupComponent
-                id={`price`}
-                type="number"
-                value={menu.price.toString()}
-                onChange={(val) => setMenu({ ...menu, price: Number(val) })}
-                required={true}
-                label="Price"
-              />
+            <InputGroupComponent
+              id={`price`}
+              type="number"
+              value={menu.price.toString()}
+              onChange={(val) => setMenu({ ...menu, price: Number(val) })}
+              required={true}
+              label="Price"
+            />
 
-              <InputGroupComponent
-                id={`description`}
-                type="text"
-                value={menu.description}
-                onChange={(val) => setMenu({ ...menu, description: val })}
-                required={true}
-                label="Description"
-              />
+            <InputGroupComponent
+              id={`description`}
+              type="text"
+              value={menu.description}
+              onChange={(val) => setMenu({ ...menu, description: val })}
+              required={true}
+              label="Description"
+            />
 
-              <Select
-                id={`category`}
-                value={menu.category}
-                label="Category"
-                required={true}
-                onChange={(val) => setMenu({ ...menu, category: val })}
-              >
-                <option value="">--- Select Category ---</option>
-                <option value="FOOD">Food</option>
-                <option value="SNACK">Snack</option>
-                <option value="DRINK">Drink</option>
-              </Select>
+            <Select
+              id={`category`}
+              value={menu.category}
+              label="Category"
+              required={true}
+              onChange={(val) => setMenu({ ...menu, category: val })}
+            >
+              <option value="">--- Select Category ---</option>
+              <option value="FOOD">Food</option>
+              <option value="SNACK">Snack</option>
+              <option value="DRINK">Drink</option>
+            </Select>
 
-              <FileInput
-                acceptTypes={[
-                  "application/pdf",
-                  "image/png",
-                  "image/jpeg",
-                  "image/jpg",
-                ]}
-                id="profile_picture"
-                label="Upload Picture (Max 2MB, PDF/JPG/JPEG/PNG)"
-                onChange={(f) => setFile(f)}
-                required={false}
-              />
+            <FileInput
+              acceptTypes={[
+                "application/pdf",
+                "image/png",
+                "image/jpeg",
+                "image/jpg",
+              ]}
+              id="profile_picture"
+              label="Upload Picture (Max 2MB, PDF/JPG/JPEG/PNG)"
+              onChange={(f) => setFile(f)}
+              required={false}
+            />
+          </div>
+          {/* end modal body */}
+
+          {/* modal footer */}
+          <div className="w-full p-5 flex rounded-b-2xl shadow">
+            <div className="flex ml-auto gap-2">
+              <ButtonDanger type="button" onClick={() => setIsShow(false)}>
+                Cancel
+              </ButtonDanger>
+              <ButtonSuccess type="submit">Save</ButtonSuccess>
             </div>
-            {/* end modal body */}
-
-            {/* modal footer */}
-            <div className="w-full p-5 flex rounded-b-2xl shadow">
-              <div className="flex ml-auto gap-2">
-                <ButtonDanger type="button" onClick={() => setIsShow(false)}>
-                  Cancel
-                </ButtonDanger>
-                <ButtonSuccess type="submit">Save</ButtonSuccess>
-              </div>
-            </div>
-            {/* end modal footer */}
-          </form>
-        </Modal>
+          </div>
+          {/* end modal footer */}
+        </form>
+      </Modal>
     </div>
-  )
+  );
 };
 
 export default AddMenu;
